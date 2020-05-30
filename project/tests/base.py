@@ -15,14 +15,20 @@ class BaseTestCase(TestCase):
         return app
 
     def setUp(self):
+        self.base_title = "Flask Sample App"
         db.create_all()
         user = User(
             name="admin_user",
             email="ad@min.com",
-            password="admin_user"
+            password="admin_user",
+            admin=True
         )
-        db.session.add(user)
-        db.session.commit()
+        user2 = User(
+            name="admin_user2",
+            email="ad2@min.com",
+            password="admin_user2"
+        )
+        db.session.bulk_save_objects([user, user2])
 
     def tearDown(self):
         db.session.remove()

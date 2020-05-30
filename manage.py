@@ -6,6 +6,7 @@ import unittest
 import coverage
 
 from flask.cli import FlaskGroup
+from faker import Faker
 
 from project.server import create_app, db
 from project.server.models import User
@@ -56,7 +57,31 @@ def create_admin():
 @cli.command()
 def create_data():
     """Creates sample data."""
-    pass
+    db.session.add(User(
+        name="Example User",
+        email="example@railstutorial.org",
+        password="foobar",
+        admin=False
+    ))
+    db.session.commit()
+
+    users = []
+    names = []
+    for n in range(99):
+        fake = Faker()
+        while fake.name() in names:
+            fake = Faker()
+        name = fake.name()
+        email = f"example-{n+1}@railstutorial.org"
+        password = "password"
+        user = User(
+            name=name,
+            email=email,
+            password=password,
+            admin=False
+        )
+        users.append(user)
+    db.session.bulk_save_objects(users)
 
 
 @cli.command()

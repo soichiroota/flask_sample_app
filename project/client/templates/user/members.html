@@ -1,7 +1,38 @@
 {% extends "_base.html" %}
+{% block title %}All users{% endblock %}
 {% block content %}
+<h1>All users</h1>
+{{ pagination.info }}
+{{ pagination.links }}
+<ul class="users">
+  {% for user in users %}
+    {% include 'user/_user.html' %}
+  {% else %}
+    <li><em>Unbelievable.  No users here so far</em></li>
+  {% endfor %}
+</ul>
+{{ pagination.links }}
 
-  <h1>Welcome, <em>{{ current_user.email }}</em>!</h1>
-  <h3>This is the members-only page.</h3>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+  $(function() {
+    $(".user-delete-link").on("click", function() {
+      var delete_url = $(this).attr('data-delete-url');
+      $.ajax({
+        url: delete_url,
+        type: 'DELETE',
+        success: function(response) {
+          console.log(response)
+          if (response.status == 'OK') {
+            window.location = '{{ url_for("user.members") }}';
+          } else {
+            alert('Delete failed.')
+          }
+        }
+      });
+      return false;
+    });
+  });
+</script>
 
 {% endblock %}

@@ -34,7 +34,7 @@
           </a>
           <ul class="dropdown-menu">
             <li><a href="{{ url_for('user.show', user_id=current_user.id) }}">Profile</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="{{ url_for('user.edit', user_id=current_user.id) }}">Settings</a></li>
             <li class="divider"></li>
             <li><a href="{{ url_for('user.logout') }}">Logout</a></li>
           </ul>

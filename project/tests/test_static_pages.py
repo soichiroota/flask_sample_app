@@ -7,10 +7,6 @@ from base import BaseTestCase
 
 
 class TestStaticPagesBlueprint(BaseTestCase):
-    def setUp(self):
-        super().__init__()
-        self.base_title = "Flask Sample App"
-
     def test_jome(self):
         # Ensure Flask is setup.
         response = self.client.get(

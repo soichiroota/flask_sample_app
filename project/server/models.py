@@ -7,6 +7,7 @@ from flask import current_app
 from sqlalchemy.orm import synonym
 
 from project.server import db, bcrypt
+from project.server.helpers.user_helper import gravatar_url_for
 
 
 class User(db.Model):
@@ -55,6 +56,9 @@ class User(db.Model):
 
     def get_id(self):
         return self.id
+
+    def gravatar_url(self, size=80):
+        return gravatar_url_for(self, size=size)
 
     def __repr__(self):
         return "<User {0}>".format(self.email)

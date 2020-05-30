@@ -125,6 +125,78 @@ class TestUserBlueprint(BaseTestCase):
             self.assertTrue(current_user.is_active())
             self.assertEqual(response.status_code, 200)
 
+    def test_user_edit(self):
+        # Ensure edit behaves correctlys.
+        user = User.query.filter_by(email="ad@min.com").first()
+        with self.client:
+            self.client.post(
+                "/login",
+                data=dict(email="ad@min.com", password="admin_user"),
+                follow_redirects=True,
+            )
+            response = self.client.post(
+                f"/users/{user.id}/edit/",
+                data=dict(
+                    name="test",
+                    email="test@tester.com",
+                    password="testing",
+                    confirm="testing",
+                ),
+                follow_redirects=True,
+            )
+            self.assertIn(b"Profile updated", response.data)
+            self.assertTrue(current_user.name == "test")
+            self.assertTrue(current_user.email == "test@tester.com")
+            self.assertTrue(current_user.is_active())
+            self.assertEqual(response.status_code, 200)
+
+    def test_user_edit__when_logged_in_as_wrong_user(self):
+        # Ensure edit behaves correctlys.
+        user = User.query.filter_by(email="ad@min.com").first()
+        with self.client:
+            self.client.post(
+                "/login",
+                data=dict(email="ad2@min.com", password="admin_user2"),
+                follow_redirects=True,
+            )
+            response = self.client.post(
+                f"/users/{user.id}/edit/",
+                data=dict(
+                    name="test",
+                    email="test@tester.com",
+                    password="testing",
+                    confirm="testing",
+                ),
+                follow_redirects=True,
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Sample App", response.data)
+        self.assertIn(b"Login", response.data)
+        self.assertIn(
+            f"{self.base_title} | Home".encode(),
+            response.data
+        )
+
+    def test_user_delete(self):
+        # Ensure delete behaves correctlys.
+        users = User.query.all()
+        user_count = len(users)
+        user = users[-1]
+        with self.client:
+            self.client.post(
+                "/login",
+                data=dict(email="ad@min.com", password="admin_user"),
+                follow_redirects=True,
+            )
+            response = self.client.delete(
+                f"/users/{user.id}/delete/",
+                follow_redirects=True,
+            )
+            self.assertIn(b"OK", response.data)
+            users = User.query.all()
+            self.assertEqual(len(users), user_count-1)
+            self.assertEqual(response.status_code, 200)
+
 
 if __name__ == "__main__":
     unittest.main()

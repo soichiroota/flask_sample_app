@@ -1,0 +1,7 @@
+<li>
+    <img src="{{ user.gravatar_url(size=50) }}" alt="{{ user.name }}" class="gravatar">
+    <a href="{{ url_for('user.show', user_id=user.id) }}">{{ user.name }}</a>
+    {% if current_user.is_authenticated and current_user.admin and current_user.id != user.id %}
+        <a class="user-delete-link" href="#" data-delete-url="{{ url_for('user.delete', user_id=user.id) }}">delete</a>
+    {% endif %}
+</li>
