@@ -21,7 +21,10 @@ class TestUserBlueprint(BaseTestCase):
                 data=dict(email="ad@min.com", password="admin_user"),
                 follow_redirects=True,
             )
-            self.assertIn(b"Welcome", response.data)
+            self.assertIn(
+                b"You are logged in. Welcome!",
+                response.data
+            )
             self.assertIn(b"Logout", response.data)
             self.assertIn(b"Members", response.data)
             self.assertTrue(current_user.email == "ad@min.com")
