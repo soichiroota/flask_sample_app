@@ -11,7 +11,7 @@ class TestStaticPagesBlueprint(BaseTestCase):
         super().__init__()
         self.base_title = "Flask Sample App"
 
-    def test_jome(self):
+    def test_home(self):
         # Ensure Flask is setup.
         response = self.client.get(
             "/static_pages/home",
