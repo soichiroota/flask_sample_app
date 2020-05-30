@@ -110,6 +110,7 @@ class TestUserBlueprint(BaseTestCase):
             response = self.client.post(
                 "/register",
                 data=dict(
+                    name="test",
                     email="test@tester.com",
                     password="testing",
                     confirm="testing",
