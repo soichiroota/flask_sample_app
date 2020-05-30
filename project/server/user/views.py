@@ -7,6 +7,7 @@ from flask_login import login_user, logout_user, login_required
 from project.server import bcrypt, db
 from project.server.models import User
 from project.server.user.forms import LoginForm, RegisterForm
+from project.server.helpers.user_helper import gravatar_url_for
 
 
 user_blueprint = Blueprint("user", __name__)
@@ -27,7 +28,7 @@ def register():
         login_user(user)
 
         flash("Thank you for registering.", "success")
-        return redirect(url_for("user.members"))
+        return redirect(url_for("user.show", user_id=user.id))
 
     return render_template("user/register.html", form=form)
 
@@ -42,7 +43,7 @@ def login():
         ):
             login_user(user)
             flash("You are logged in. Welcome!", "success")
-            return redirect(url_for("user.members"))
+            return redirect(url_for("user.show", user_id=user.id))
         else:
             flash("Invalid email and/or password.", "danger")
             return render_template("user/login.html", form=form)
@@ -61,3 +62,15 @@ def logout():
 @login_required
 def members():
     return render_template("user/members.html")
+
+
+@user_blueprint.route('/users/<int:user_id>/')
+@login_required
+def show(user_id):
+    user = User.query.get(user_id)
+    gravatar_url = gravatar_url_for(user)
+    return render_template(
+        'user/show.html',
+        user=user,
+        gravatar_url=gravatar_url
+    )

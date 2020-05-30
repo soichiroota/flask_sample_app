@@ -1,0 +1,41 @@
+{% extends "_base.html" %}
+{% block title %}{{ user.name }}{% endblock %}
+{% block content %}
+<div class="row">
+    <aside class="col-md-4">
+        <section class="user_info">
+        <h1>
+            {{ user.name }}
+            <img src="{{ gravatar_url }}" alt="name" class="gravatar">
+        </h1>
+
+        <div>
+        <div>{{ user.email }}</div>
+        </div>
+        </section>
+    </aside>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+  $(function() {
+    $(".user-delete-link").on("click", function() {
+      var delete_url = $(this).attr('data-delete-url');
+      $.ajax({
+        url: delete_url,
+        type: 'DELETE',
+        success: function(response) {
+          console.log(response)
+          if (response.status == 'OK') {
+            window.location = '{{ url_for("user.members") }}';
+          } else {
+            alert('Delete failed.')
+          }
+        }
+      });
+      return false;
+    });
+  });
+</script>
+
+{% endblock content %}
