@@ -43,7 +43,7 @@ def login():
         if user and bcrypt.check_password_hash(
             user.password, request.form["password"]
         ):
-            login_user(user)
+            login_user(user, remember=form.remember_me.data)
             flash("You are logged in. Welcome!", "success")
             return redirect(url_for("user.show", user_id=user.id))
         else:
