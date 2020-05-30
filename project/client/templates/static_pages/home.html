@@ -2,10 +2,9 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
-<div>
-  <h1>Sample App</h1>
-  <hr><br>
-  <p>Add some content here!</p>
+<div class="center jumbotron">
+  <h1>Welcome to the Sample App</h1>
+  <a href="{{ url_for('user.register') }}" class="btn btn-lg btn-primary">Sign up now!</a>
 </div>
 
 {% endblock %}
