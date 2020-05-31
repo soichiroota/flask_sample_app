@@ -1,6 +1,6 @@
 # manage.py
 
-
+import datetime
 import unittest
 
 import coverage
@@ -49,7 +49,9 @@ def create_admin():
         name="admin",
         email="ad@min.com",
         password="admin",
-        admin=True
+        admin=True,
+        activated=True,
+        activated_on=datetime.datetime.now()
     ))
     db.session.commit()
 
@@ -61,7 +63,9 @@ def create_data():
         name="Example User",
         email="example@railstutorial.org",
         password="foobar",
-        admin=False
+        admin=False,
+        activated=True,
+        activated_on=datetime.datetime.now()
     ))
     db.session.commit()
 
@@ -78,7 +82,9 @@ def create_data():
             name=name,
             email=email,
             password=password,
-            admin=False
+            admin=False,
+            activated=True,
+            activated_on=datetime.datetime.now()
         )
         users.append(user)
     db.session.bulk_save_objects(users)

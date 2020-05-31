@@ -1,5 +1,5 @@
 # project/server/tests/base.py
-
+import datetime
 
 from flask_testing import TestCase
 
@@ -21,12 +21,16 @@ class BaseTestCase(TestCase):
             name="admin_user",
             email="ad@min.com",
             password="admin_user",
-            admin=True
+            admin=True,
+            activated=True,
+            activated_on=datetime.datetime.now()
         )
         user2 = User(
             name="admin_user2",
             email="ad2@min.com",
-            password="admin_user2"
+            password="admin_user2",
+            activated=True,
+            activated_on=datetime.datetime.now()
         )
         db.session.bulk_save_objects([user, user2])
 

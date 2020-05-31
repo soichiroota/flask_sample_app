@@ -15,6 +15,13 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
 
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.getenv('EMAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""

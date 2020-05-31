@@ -3,7 +3,7 @@
 
 from flask import (
     render_template, Blueprint, url_for, redirect,
-    flash, request, abort, jsonify
+    flash, request, abort, jsonify, current_app, Markup
 )
 from flask_login import (
     login_user, logout_user, login_required, current_user
@@ -31,10 +31,28 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        login_user(user)
-
-        flash("Thank you for registering.", "success")
-        return redirect(url_for("user.show", user_id=user.id))
+        if current_app.config.get('MAIL_USERNAME'):
+            user.send_activation_email()
+            flash(
+                "Please check your email to activate your account.",
+                "info"
+            )
+        else:
+            token = user.get_token()
+            activation_url = url_for(
+                'account_activation.edit',
+                token=token,
+                _external=True
+            )
+            flash(
+                Markup(
+                    f'Hi {user.name}, Welcome to the Sample App! ' +
+                    f'Click <a href="{activation_url}">here</a> ' +
+                    'to activate your account'
+                ),
+                "info"
+            )
+        return redirect(url_for("static_pages.home"))
 
     return render_template("user/register.html", form=form)
 
@@ -71,7 +89,10 @@ def logout():
 def members():
     page = request.args.get(get_page_parameter(), type=int, default=1)
 
-    users = User.query.all()
+    if current_user.admin:
+        users = User.query.all()
+    else:
+        users = User.query.filter_by(activated=True).all()
     pagination = Pagination(
         page=page,
         total=len(users),

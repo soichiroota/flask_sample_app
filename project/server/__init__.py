@@ -10,6 +10,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_mail import Mail
 
 
 # instantiate the extensions
@@ -19,6 +20,7 @@ toolbar = DebugToolbarExtension()
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 migrate = Migrate()
+mail = Mail()
 
 
 def create_app(script_info=None):
@@ -43,15 +45,20 @@ def create_app(script_info=None):
     bootstrap.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    mail.init_app(app)
 
     # register blueprints
     from project.server.user.views import user_blueprint
     from project.server.main.views import main_blueprint
     from project.server.static_pages.views import static_pages_blueprint
+    from project.server.account_activation.views import (
+        account_activation_blueprint
+    )
 
     app.register_blueprint(user_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(static_pages_blueprint)
+    app.register_blueprint(account_activation_blueprint)
 
     # flask login
     from project.server.models import User

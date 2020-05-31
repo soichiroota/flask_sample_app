@@ -19,6 +19,8 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@web-db:5432/users_dev
       - DATABASE_TEST_URL=postgres://postgres:postgres@web-db:5432/users_test
       - SECRET_KEY=change_me_in_prod
+      - EMAIL_USERNAME=$EMAIL_USERNAME
+      - EMAIL_PASSWORD=$EMAIL_PASSWORD
     depends_on:
       - web-db
 
