@@ -54,11 +54,15 @@ def create_app(script_info=None):
     from project.server.account_activation.views import (
         account_activation_blueprint
     )
+    from project.server.password_reset.views import (
+        password_reset_blueprint
+    )
 
     app.register_blueprint(user_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(static_pages_blueprint)
     app.register_blueprint(account_activation_blueprint)
+    app.register_blueprint(password_reset_blueprint)
 
     # flask login
     from project.server.models import User

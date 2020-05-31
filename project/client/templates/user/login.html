@@ -17,7 +17,8 @@
     <div class="col-lg-4 col-sm-4">
       {{ wtf.form_field(form.email) }}
       {{ wtf.form_field(form.password) }}
-      {{ wtf.form_field(form.remember_me) }}
+      <a href="{{ url_for('password_reset.new') }}">(forgot password)</a>
+      {{ wtf.form_field(form.remember_me) }} 
 
       <button class="btn btn-success" type="submit">Sign In!</button>
       <br><br>

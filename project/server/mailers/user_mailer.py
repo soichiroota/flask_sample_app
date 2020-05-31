@@ -27,4 +27,20 @@ Click on the link below to activate your account:
 
     @classmethod
     def password_reset(cls, user):
-        pass
+        token = user.get_token(expires_sec=7200)
+        msg = Message(
+            'Password Reset',
+            sender=current_app.config.get('MAIL_USERNAME'),
+            recipients=[user.email]
+        )
+        msg.body = '''To reset your password, visit the following link: {url}
+If you did not make this request,
+then simply ignore this email and no change will be made.
+'''.format(
+            url=url_for(
+                'password_reset.edit',
+                token=token,
+                _external=True
+            )
+        )
+        mail.send(msg)

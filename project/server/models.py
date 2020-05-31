@@ -118,6 +118,9 @@ class User(db.Model):
     def send_activation_email(self):
         UserMailer.account_activation(self)
 
+    def send_password_reset_email(self):
+        UserMailer.password_reset(self)
+
     # アカウントを有効にする
     def activate(self):
         self.activated = True
