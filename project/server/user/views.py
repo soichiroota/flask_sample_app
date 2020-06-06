@@ -8,7 +8,7 @@ from flask import (
 from flask_login import (
     login_user, logout_user, login_required, current_user
 )
-from flask_paginate import Pagination, get_page_parameter
+from flask_paginate import Pagination, get_page_args
 
 from project.server import bcrypt, db
 from project.server.models import User
@@ -69,18 +69,23 @@ def logout():
 @user_blueprint.route("/members")
 @login_required
 def members():
-    page = request.args.get(get_page_parameter(), type=int, default=1)
+    page, per_page, offset = get_page_args(
+        page_parameter='page',
+        per_page_parameter='per_page'
+    )
 
     users = User.query.all()
     pagination = Pagination(
         page=page,
+        per_page=per_page,
         total=len(users),
         search=False,
-        record_name='users'
+        record_name='users',
+        css_framework='bootstrap4'
     )
     return render_template(
         "user/members.html",
-        users=users,
+        users=users[offset: offset + per_page],
         pagination=pagination
     )
 
