@@ -186,3 +186,63 @@ def delete(user_id):
     db.session.commit()
     flash("User deleted")
     return jsonify({'status': 'OK'})
+
+
+@user_blueprint.route('/users/<int:user_id>/following/', methods=['GET'])
+@login_required
+def following(user_id):
+    title = "Following"
+    user = User.query.get(user_id)
+
+    page, per_page, offset = get_page_args(
+        page_parameter='page',
+        per_page_parameter='per_page'
+    )
+
+    users = user.following
+
+    pagination = Pagination(
+        page=page,
+        per_page=per_page,
+        total=len(users),
+        search=False,
+        record_name='users',
+        css_framework='bootstrap4'
+    )
+    return render_template(
+        "user/show_follow.html",
+        users=users[offset: offset + per_page],
+        pagination=pagination,
+        title=title,
+        user=user
+    )
+
+
+@user_blueprint.route('/users/<int:user_id>/followers/', methods=['GET'])
+@login_required
+def followers(user_id):
+    title = "Followers"
+    user = User.query.get(user_id)
+
+    page, per_page, offset = get_page_args(
+        page_parameter='page',
+        per_page_parameter='per_page'
+    )
+
+    users = user.followers
+
+    pagination = Pagination(
+        page=page,
+        per_page=per_page,
+        total=len(users),
+        search=False,
+        record_name='users',
+        css_framework='bootstrap4'
+    )
+    return render_template(
+        "user/show_follow.html",
+        users=users[offset: offset + per_page],
+        pagination=pagination,
+        title=title,
+        user=user
+    )

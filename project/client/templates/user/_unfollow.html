@@ -1,0 +1,23 @@
+<a class="btn user-unfollow-link" href="#" data-delete-url="{{ url_for('relationship.delete', user_id=user.id) }}">Unfollow</a>
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+  $(function() {
+    $(".user-unfollow-link").on("click", function() {
+      var delete_url = $(this).attr('data-delete-url');
+      $.ajax({
+        url: delete_url,
+        type: 'DELETE',
+        success: function(response) {
+          console.log(response)
+          if (response.status == 'OK') {
+            window.location = '{{ url_for("user.show", user_id=user.id) }}';
+          } else {
+            alert('Delete failed.')
+          }
+        }
+      });
+      return false;
+    });
+  });
+</script>

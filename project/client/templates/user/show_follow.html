@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row">
+  <aside class="col-md-4">
+    <section class="user_info">
+        <img src="{{ gravatar_url }}" alt="{{ user.name }}" class="gravatar">
+      <h1>{{ user.name }}</h1>
+      <span><a href="{{ url_for('user.show', user_id=user.id) }}">view my profile</a></span>
+      <span><b>Microposts:</b>{{ user.micropost_count() }}</span>
+    </section>
+    <section class="stats">
+      {% include 'shared/_stats.html' %}
+      {% if users %}
+        <div class="user_avatars">
+          {% for u in users %}
+          <img src="{{ user.gravatar_url(size=30) }}" alt="{{ user.name }}" class="gravatar">
+          {% endfor %}
+        </div>
+      {% endif %}
+    </section>
+  </aside>
+  <div class="col-md-8">
+    <h3>{{ title }}</h3>
+    {% if users %}
+        {{ pagination.info }}
+        {{ pagination.links }}
+        <ul class="users follow">
+        {% for user in users %}
+            {% with user = user %} 
+            {% include 'user/_user.html' %}
+            {% endwith %}
+        {% endfor %}
+        </ul>
+        {{ pagination.links }}
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

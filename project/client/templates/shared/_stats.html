@@ -1,0 +1,14 @@
+<div class="stats">
+  <a href="{{ url_for('user.following', user_id=user.id) }}">
+    <strong id="following" class="stat">
+      {{ user.following_count() }}
+    </strong>
+    following
+  </a>
+  <a href="{{ url_for('user.followers', user_id=user.id) }}">
+    <strong id="followers" class="stat">
+      {{ user.follower_count() }}
+    </strong>
+    followers
+  </a>
+</div>

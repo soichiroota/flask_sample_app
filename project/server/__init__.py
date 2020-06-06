@@ -60,6 +60,9 @@ def create_app(script_info=None):
     from project.server.micropost.views import (
         micropost_blueprint
     )
+    from project.server.relationship.views import (
+        relationship_blueprint
+    )
 
     app.register_blueprint(user_blueprint)
     app.register_blueprint(main_blueprint)
@@ -67,6 +70,7 @@ def create_app(script_info=None):
     app.register_blueprint(account_activation_blueprint)
     app.register_blueprint(password_reset_blueprint)
     app.register_blueprint(micropost_blueprint)
+    app.register_blueprint(relationship_blueprint)
 
     # flask login
     from project.server.models import User

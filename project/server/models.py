@@ -6,6 +6,7 @@ from secrets import token_urlsafe
 
 from flask import current_app
 from sqlalchemy.orm import synonym
+from sqlalchemy import or_
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from project.server import db, bcrypt
@@ -136,7 +137,69 @@ class User(db.Model):
         return len(self.microposts)
 
     def feed(self):
-        return Micropost.query.filter_by(user_id=self.id).all()
+        return Micropost.query.filter(
+            or_(
+                Micropost.user_id.in_(self.following_ids),
+                Micropost.user_id == self.id
+            )
+        ).order_by(Micropost.updated_on.desc()).all()
+
+    @property
+    def following(self):
+        relationships = Relationship.query.filter_by(
+            follower_id=self.id
+        ).all()
+        return [relationship.followed for relationship in relationships]
+
+    @property
+    def following_ids(self):
+        relationships = Relationship.query.filter_by(
+            follower_id=self.id
+        ).all()
+        return [relationship.followed.id for relationship in relationships]
+
+    @property
+    def followers(self):
+        relationships = Relationship.query.filter_by(
+            followed_id=self.id
+        ).all()
+        return [relationship.follower for relationship in relationships]
+
+    @property
+    def follower_ids(self):
+        relationships = Relationship.query.filter_by(
+            followed_id=self.id
+        ).all()
+        return [relationship.follower.id for relationship in relationships]
+
+    # ユーザーをフォローする
+    def follow(self, other_user):
+        relationship = Relationship(
+            follower_id=self.id,
+            followed_id=other_user.id
+        )
+        db.session.add(relationship)
+        db.session.commit()
+
+    # ユーザーをフォロー解除する
+    def unfollow(self, other_user):
+        relationship = Relationship.query.filter_by(
+            follower_id=self.id,
+            followed_id=other_user.id
+        ).first()
+        db.session.delete(relationship)
+        db.session.commit()
+
+    # 現在のユーザーがフォローしてたらtrueを返す
+    def is_following(self, other_user):
+        followed_ids = [user.id for user in self.following]
+        return other_user.id in followed_ids
+
+    def following_count(self):
+        return len(self.following)
+
+    def follower_count(self):
+        return len(self.followers)
 
     def __repr__(self):
         return "<User {0}>".format(self.email)
@@ -196,3 +259,26 @@ class Micropost(db.Model):
     def __repr__(self):
         return '<Entry id={id} content={content!r}>'.format(
                 id=self.id, content=self.content)
+
+
+class Relationship(db.Model):
+
+    __tablename__ = "relationships"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    follower = db.relationship(User, primaryjoin=follower_id == User.id)
+    followed = db.relationship(User, primaryjoin=followed_id == User.id)
+    created_on = db.Column(db.DateTime, nullable=False)
+    updated_on = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.datetime.now,
+        onupdate=datetime.datetime.now
+    )
+
+    def __init__(self, follower_id, followed_id):
+        self.follower_id = follower_id
+        self.followed_id = followed_id
+        self.created_on = datetime.datetime.now()

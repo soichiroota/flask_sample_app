@@ -98,6 +98,14 @@ def create_data():
         )
     db.session.commit()
 
+    users = User.query.all()
+    user = users[0]
+    following = users[2:50]
+    followers = users[3:40]
+    for followed in following:
+        user.follow(followed)
+    for follower in followers:
+        follower.follow(user) 
 
 
 @cli.command()

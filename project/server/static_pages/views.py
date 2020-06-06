@@ -63,7 +63,8 @@ def home():
             micropost=micropost,
             form=form,
             feed_items=feed_items[offset: offset + per_page],
-            pagination=pagination
+            pagination=pagination,
+            user=current_user
         )
     else:
         pagination = Pagination(
@@ -79,7 +80,8 @@ def home():
             micropost=micropost,
             form=form,
             feed_items=[],
-            pagination=pagination
+            pagination=pagination,
+            user=current_user
         )
 
 

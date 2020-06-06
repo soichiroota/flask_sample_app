@@ -196,5 +196,24 @@ class TestUserBlueprint(BaseTestCase):
             self.assertEqual(response.status_code, 200)
 
 
+class TestUser(BaseTestCase):
+    def test_follow(self):
+        # Ensure delete behaves correctlys.
+        users = User.query.all()
+        user1 = users[0]
+        user2 = users[1]
+        user1.follow(user2)
+        self.assertTrue(user1.is_following(user2))
+
+    def test_unfollow(self):
+        # Ensure delete behaves correctlys.
+        users = User.query.all()
+        user1 = users[0]
+        user2 = users[1]
+        user1.follow(user2)
+        user1.unfollow(user2)
+        self.assertFalse(user1.is_following(user2))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,9 @@
+{% if current_user.is_authenticated and current_user.id != user.id %}
+  <div id="follow_form">
+  {% if current_user.is_following(user) %}
+    {% include 'user/_unfollow.html' %}
+  {% else %}
+    {% include 'user/_follow.html' %}
+  {% endif %}
+  </div>
+{% endif %}

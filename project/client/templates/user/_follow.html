@@ -1,0 +1,23 @@
+<a class="btn btn-primary user-follow-link" href="#" data-create-url="{{ url_for('relationship.create', user_id=user.id) }}">Follow</a>
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+  $(function() {
+    $(".user-follow-link").on("click", function() {
+      var create_url = $(this).attr('data-create-url');
+      $.ajax({
+        url: create_url,
+        type: 'POST',
+        success: function(response) {
+          console.log(response)
+          if (response.status == 'OK') {
+            window.location = '{{ url_for("user.show", user_id=user.id) }}';
+          } else {
+            alert('Create failed.')
+          }
+        }
+      });
+      return false;
+    });
+  });
+</script>

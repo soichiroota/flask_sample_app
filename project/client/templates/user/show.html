@@ -8,13 +8,15 @@
             {{ user.name }}
             <img src="{{ gravatar_url }}" alt="{{ user.name }}" class="gravatar">
         </h1>
-
-        <div>
-        <div>{{ user.email }}</div>
-        </div>
+        </section>
+        <section class="stats">
+            {% include 'shared/_stats.html' %}
         </section>
     </aside>
     <div class="col-md-8">
+        {% if current_user.is_authenticated %}
+            {% include 'user/_follow_form.html' %}
+        {% endif %}
         {% if microposts %}
           <h3>Microposts ({{ user.micropost_count() }})</h3>
           {{ pagination.info }}
