@@ -59,35 +59,35 @@ def create_admin():
 @cli.command()
 def create_data():
     """Creates sample data."""
-    db.session.add(User(
+    user = User(
         name="Example User",
         email="example@railstutorial.org",
         password="foobar",
         admin=False,
         activated=True,
         activated_on=datetime.datetime.now()
-    ))
-    db.session.commit()
+    )
+    db.session.add(user)
 
-    users = []
-    names = []
+    names = [user.name]
     for n in range(99):
         fake = Faker()
-        while fake.name() in names:
+        while len(fake.name()) < 51 and fake.name() in names:
             fake = Faker()
         name = fake.name()
+        names.append(name)
         email = f"example-{n+1}@railstutorial.org"
         password = "password"
-        user = User(
+        db.session.add(User(
             name=name,
             email=email,
             password=password,
             admin=False,
             activated=True,
             activated_on=datetime.datetime.now()
-        )
-        users.append(user)
-    db.session.bulk_save_objects(users)
+        ))
+
+    db.session.commit()
 
     microposts = []
     users = User.query.limit(6)
