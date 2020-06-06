@@ -1,0 +1,14 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+<form class="form" role="form" method="post" action="" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens="only") }}
+
+    <div class="col-lg-4 col-sm-4">
+      {{ wtf.form_field(form.content) }}
+      {{ wtf.form_field(form.picture) }}
+
+      <button class="btn btn-primary" type="submit">Post</button>
+    </div>
+  </form>

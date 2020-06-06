@@ -9,7 +9,7 @@ from flask.cli import FlaskGroup
 from faker import Faker
 
 from project.server import create_app, db
-from project.server.models import User
+from project.server.models import User, Micropost
 import subprocess
 import sys
 
@@ -88,6 +88,16 @@ def create_data():
         )
         users.append(user)
     db.session.bulk_save_objects(users)
+
+    microposts = []
+    users = User.query.limit(6)
+    for user in users:
+        fake = Faker()
+        content = fake.sentence()
+        micropost = Micropost(content=content, user_id=user.id)
+        microposts.append(micropost)
+    db.session.bulk_save_objects(microposts)
+
 
 
 @cli.command()

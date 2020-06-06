@@ -2,9 +2,25 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
+{% if current_user.is_authenticated %}
+  <div class="row">
+    <aside class="col-md-4">
+      <section class="user_info">
+        {% include 'shared/_user_info.html' %}
+      </section>
+      <section class="micropost_form">
+        {% include 'shared/_micropost_form.html' %}
+      </section>
+    </aside>
+    <div class="col-md-8">
+      <h3>Micropost Feed</h3>
+      {% include 'shared/_feed.html' %}
+    </div>
+  </div>
+{% else %}
 <div class="center jumbotron">
   <h1>Welcome to the Sample App</h1>
   <a href="{{ url_for('user.register') }}" class="btn btn-lg btn-primary">Sign up now!</a>
 </div>
-
+{% endif %}
 {% endblock %}

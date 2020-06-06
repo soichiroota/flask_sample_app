@@ -1,0 +1,10 @@
+{% if feed_items %}
+    {{ pagination.info }}
+    {{ pagination.links }}
+    <ol class="microposts">
+      {% for micropost in feed_items %}
+          {% include 'micropost/_micropost.html' %}
+      {% endfor %}
+    </ol>
+    {{ pagination.links }}
+{% endif %}

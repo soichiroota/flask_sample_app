@@ -1,7 +1,8 @@
 # project/server/models.py
 
-
 import datetime
+from urllib.parse import quote
+from secrets import token_urlsafe
 
 from flask import current_app
 from sqlalchemy.orm import synonym
@@ -30,6 +31,11 @@ class User(db.Model):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     activated = db.Column(db.Boolean, nullable=False, default=False)
     activated_on = db.Column(db.DateTime, nullable=True)
+    microposts = db.relationship(
+        "Micropost",
+        backref="user",
+        order_by="desc(Micropost.created_on)"
+    )
 
     def __init__(
         self,
@@ -126,5 +132,67 @@ class User(db.Model):
         self.activated = True
         self.activated_on = datetime.datetime.now()
 
+    def micropost_count(self):
+        return len(self.microposts)
+
+    def feed(self):
+        return Micropost.query.filter_by(user_id=self.id).all()
+
     def __repr__(self):
         return "<User {0}>".format(self.email)
+
+
+class Micropost(db.Model):
+    __tablename__ = 'microposts'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(140))
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False
+    )
+    _picture_name = db.Column(db.String(1023), unique=True)
+    # user = db.relationship(User, primaryjoin=user_id == User.id)
+    created_on = db.Column(db.DateTime, nullable=False)
+    updated_on = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.datetime.now,
+        onupdate=datetime.datetime.now
+    )
+
+    def __init__(self, content, user_id, picture_name=None):
+        self.content = content
+        self.user_id = user_id
+        self.created_on = datetime.datetime.now()
+        self._set_picture_name(picture_name)
+
+    def _get_picture_name(self):
+        return self._picture_name
+
+    def _set_picture_name(self, picture_name):
+        if picture_name:
+            self._picture_name = token_urlsafe(
+                self.user_id
+            ) + quote(picture_name)
+        else:
+            self._picture_name = None
+
+    picture_name_descriptor = property(
+        _get_picture_name,
+        _set_picture_name
+    )
+    picture_name = synonym(
+        '_picture_name',
+        descriptor=picture_name_descriptor
+    )
+
+    def created_on_in_words(self):
+        return self.created_on.strftime('%Y-%m-%d %H:%M:%S')
+
+    def updated_on_in_words(self):
+        return self.updated_on.strftime('%Y-%m-%d %H:%M:%S')
+
+    def __repr__(self):
+        return '<Entry id={id} content={content!r}>'.format(
+                id=self.id, content=self.content)

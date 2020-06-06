@@ -4,7 +4,7 @@ import datetime
 from flask_testing import TestCase
 
 from project.server import db, create_app
-from project.server.models import User
+from project.server.models import User, Micropost
 
 app = create_app()
 
@@ -17,7 +17,7 @@ class BaseTestCase(TestCase):
     def setUp(self):
         self.base_title = "Flask Sample App"
         db.create_all()
-        user = User(
+        user1 = User(
             name="admin_user",
             email="ad@min.com",
             password="admin_user",
@@ -32,7 +32,11 @@ class BaseTestCase(TestCase):
             activated=True,
             activated_on=datetime.datetime.now()
         )
-        db.session.bulk_save_objects([user, user2])
+        db.session.bulk_save_objects([user1, user2])
+        user = User.query.first()
+        micropost = Micropost(content="Lorem ipsum", user_id=user.id)
+        db.session.add(micropost)
+        db.session.commit()
 
     def tearDown(self):
         db.session.remove()

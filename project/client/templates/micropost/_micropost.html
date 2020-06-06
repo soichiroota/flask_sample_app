@@ -1,0 +1,43 @@
+<li id="micropost-{{ micropost.id }}">
+    <a href="{{ url_for('user.show', user_id=micropost.user.id) }}">
+        <img src="{{ micropost.user.gravatar_url(size=50) }}" alt="{{ micropost.user.name }}" class="gravatar">
+    </a>
+    <span class="user"><a href="{{ url_for('user.show', user_id=micropost.user.id) }}">{{ micropost.user.name }}</a></span>
+    <div>
+    <span class="content">
+        {{ micropost.content }}
+        {% if micropost.picture_name %}
+            <img src="{{ url_for('static', filename='uploads/images/' + micropost.picture_name) }}" alt="{{ micropost.picture_name }}" width="400">
+        {% endif %}
+    </span>
+    <br>
+    <span class="timestamp small">
+      Posted at {{ micropost.created_on_in_words() }}.
+    </span>
+    {% if current_user.id == micropost.user.id %}
+    <a class="micropost-delete-link" href="#" data-delete-url="{{ url_for('micropost.delete', micropost_id=micropost.id) }}">delete</a>
+    {% endif %}
+    </div>
+</li>
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+  $(function() {
+    $(".micropost-delete-link").on("click", function() {
+      var delete_url = $(this).attr('data-delete-url');
+      $.ajax({
+        url: delete_url,
+        type: 'DELETE',
+        success: function(response) {
+          console.log(response)
+          if (response.status == 'OK') {
+            window.location = '{{ request.url }}';
+          } else {
+            alert('Delete failed.')
+          }
+        }
+      });
+      return false;
+    });
+  });
+</script>

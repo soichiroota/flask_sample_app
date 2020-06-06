@@ -1,6 +1,7 @@
 # project/server/config.py
 
 import os
+import pathlib
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,6 +22,11 @@ class BaseConfig(object):
     MAIL_USE_SSL = True
     MAIL_USERNAME = os.getenv('EMAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
+    UPLOAD_FOLDER = str(pathlib.Path(
+        'project/client/static/uploads/'
+    ).resolve())
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
 
 class DevelopmentConfig(BaseConfig):

@@ -1,0 +1,6 @@
+<a href="{{ url_for('user.show', user_id=current_user.id) }}">
+    <img src="{{ current_user.gravatar_url(size=50) }}" alt="{{ current_user.name }}" class="gravatar">
+</a>
+<h1>{{ current_user.name }}</h1>
+<span><a href="{{ url_for('user.show', user_id=current_user.id) }}">view my profile</a></span>
+<span>{{ current_user.micropost_count() }} micropost{{ "s" if current_user.micropost_count() > 1 }} </span>
