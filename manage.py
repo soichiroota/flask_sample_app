@@ -89,14 +89,14 @@ def create_data():
 
     db.session.commit()
 
-    microposts = []
     users = User.query.limit(6)
     for user in users:
         fake = Faker()
         content = fake.sentence()
-        micropost = Micropost(content=content, user_id=user.id)
-        microposts.append(micropost)
-    db.session.bulk_save_objects(microposts)
+        db.session.add(
+            Micropost(content=content, user_id=user.id)
+        )
+    db.session.commit()
 
 
 
