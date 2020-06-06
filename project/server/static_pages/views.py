@@ -6,7 +6,7 @@ from flask import (
     flash, current_app
 )
 from flask_login import current_user
-from flask_paginate import Pagination, get_page_parameter
+from flask_paginate import Pagination, get_page_args
 from werkzeug.utils import secure_filename
 
 from project.server.models import Micropost
@@ -19,7 +19,10 @@ static_pages_blueprint = Blueprint("static_pages", __name__)
 
 @static_pages_blueprint.route("/static_pages/home/", methods=['GET', 'POST'])
 def home():
-    page = request.args.get(get_page_parameter(), type=int, default=1)
+    page, per_page, offset = get_page_args(
+        page_parameter='page',
+        per_page_parameter='per_page'
+    )
     form = CreateMicropostForm(request.form)
 
     if form.validate_on_submit():
@@ -45,20 +48,39 @@ def home():
         content='',
         user_id=current_user.id
     ) if current_user.is_authenticated else None
-    feed_items = current_user.feed() if current_user.is_authenticated else []
-    pagination = Pagination(
-        page=page,
-        total=len(feed_items),
-        search=False,
-        record_name='microposts'
-    )
-    return render_template(
-        "static_pages/home.html",
-        micropost=micropost,
-        form=form,
-        feed_items=feed_items,
-        pagination=pagination
-    )
+    if current_user.is_authenticated:
+        feed_items = current_user.feed()
+        pagination = Pagination(
+            page=page,
+            per_page=per_page,
+            total=len(feed_items),
+            search=False,
+            record_name='microposts',
+            css_framework='bootstrap4'
+        )
+        return render_template(
+            "static_pages/home.html",
+            micropost=micropost,
+            form=form,
+            feed_items=feed_items[offset: offset + per_page],
+            pagination=pagination
+        )
+    else:
+        pagination = Pagination(
+            page=page,
+            per_page=per_page,
+            total=0,
+            search=False,
+            record_name='microposts',
+            css_framework='bootstrap4'
+        )
+        return render_template(
+            "static_pages/home.html",
+            micropost=micropost,
+            form=form,
+            feed_items=[],
+            pagination=pagination
+        )
 
 
 @static_pages_blueprint.route("/static_pages/help/")

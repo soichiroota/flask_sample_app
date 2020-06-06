@@ -8,7 +8,7 @@ from flask import (
 from flask_login import (
     login_user, logout_user, login_required, current_user
 )
-from flask_paginate import Pagination, get_page_args, get_page_parameter
+from flask_paginate import Pagination, get_page_args
 
 from project.server import bcrypt, db
 from project.server.models import User, Micropost
@@ -114,7 +114,10 @@ def members():
 @user_blueprint.route('/users/<int:user_id>/')
 @login_required
 def show(user_id):
-    page = request.args.get(get_page_parameter(), type=int, default=1)
+    page, per_page, offset = get_page_args(
+        page_parameter='page',
+        per_page_parameter='per_page'
+    )
 
     user = User.query.get(user_id)
     gravatar_url = gravatar_url_for(user)
@@ -122,16 +125,18 @@ def show(user_id):
     microposts = Micropost.query.filter_by(user_id=user.id).all()
     pagination = Pagination(
         page=page,
+        per_page=per_page,
         total=len(microposts),
         search=False,
-        record_name='microposts'
+        record_name='microposts',
+        css_framework='bootstrap4'
     )
 
     return render_template(
         'user/show.html',
         user=user,
         gravatar_url=gravatar_url,
-        microposts=microposts,
+        microposts=microposts[offset: offset + per_page],
         pagination=pagination
     )
 
