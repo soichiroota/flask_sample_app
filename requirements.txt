@@ -2,7 +2,7 @@ coverage>=4.5.4
 email-validator==1.1.1
 Faker==4.1.0
 flake8==3.7.9
-Flask==1.1.1
+Flask==2.2.5
 Flask-Bcrypt==0.7.1
 Flask-Bootstrap==3.3.7.1
 Flask-DebugToolbar==0.11.0
